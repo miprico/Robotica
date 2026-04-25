@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Módulo 1 · Clase 3 — Tipos de Circuitos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde:      #059669;
+    --verde-l:    #10B981;
+    --verde-bg:   #ECFDF5;
+    --azul:       #1A56DB;
+    --azul-bg:    #EFF6FF;
+    --naranja:    #D97706;
+    --naranja-bg: #FFFBEB;
+    --rojo:       #DC2626;
+    --rojo-bg:    #FEF2F2;
+    --morado:     #7C3AED;
+    --morado-bg:  #F5F3FF;
+    --g900: #111827; --g800: #1F2937; --g700: #374151;
+    --g500: #6B7280; --g300: #D1D5DB; --g200: #E5E7EB;
+    --g100: #F3F4F6; --g50:  #F9FAFB;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:var(--sans); background:#fff; color:var(--g800); line-height:1.6; }
+
+  /* ── HEADER ── */
+  .header { background:var(--g900); color:#fff; position:relative; overflow:hidden; }
+  .header::before {
+    content:''; position:absolute; top:-60px; right:-60px;
+    width:380px; height:380px;
+    background:radial-gradient(circle, rgba(16,185,129,.14) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .header-inner { max-width:1000px; margin:0 auto; padding:48px 32px 36px; position:relative; z-index:1; }
+  .breadcrumb { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--g500); margin-bottom:16px; font-family:var(--mono); }
+  .breadcrumb-sep { color:#4B5563; }
+  .breadcrumb-now { color:#6EE7B7; }
+  h1 { font-size:clamp(28px,5vw,52px); font-weight:900; letter-spacing:-2px; line-height:1.05; margin-bottom:10px; }
+  h1 .hl { color:#6EE7B7; }
+  .header-sub { font-size:15px; color:#9CA3AF; margin-bottom:26px; }
+  .pills { display:flex; gap:10px; flex-wrap:wrap; }
+  .pill {
+    font-size:12px; font-weight:500; padding:4px 12px;
+    border:1px solid rgba(255,255,255,.12); color:#D1D5DB;
+    background:rgba(255,255,255,.05); border-radius:20px;
+    font-family:var(--mono); display:inline-flex; align-items:center; gap:6px;
+  }
+  .pill-dot { width:6px; height:6px; border-radius:50%; background:#34D399; animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  /* progress */
+  .prog-strip { background:rgba(255,255,255,.05); padding:14px 32px; max-width:1000px; margin:0 auto; display:flex; align-items:center; gap:14px; }
+  .prog-lbl { font-size:11px; color:#6B7280; font-family:var(--mono); white-space:nowrap; }
+  .prog-track { flex:1; height:4px; background:rgba(255,255,255,.08); border-radius:2px; display:flex; gap:2px; }
+  .prog-seg { flex:1; height:100%; border-radius:2px; background:rgba(255,255,255,.08); }
+  .prog-seg.done { background:#34D399; }
+  .prog-seg.now  { background:#6EE7B7; }
+
+  /* ── LAYOUT ── */
+  .wrap { max-width:1000px; margin:0 auto; padding:0 32px 80px; }
+  .section { margin-top:52px; }
+  .sec-hdr { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .sec-tag {
+    font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:2px;
+    color:var(--verde); background:var(--verde-bg); padding:3px 10px;
+    border-radius:4px; border:1px solid rgba(5,150,105,.2);
+  }
+  .sec-line { flex:1; height:1px; background:var(--g200); }
+  h2 { font-size:clamp(20px,3vw,28px); font-weight:800; letter-spacing:-1px; color:var(--g900); margin-bottom:14px; }
+
+  /* ── OBJETIVO ── */
+  .obj { background:var(--verde-bg); border-left:4px solid var(--verde); padding:20px 24px; border-radius:0 8px 8px 0; }
+  .obj p { font-size:15px; color:#065f46; line-height:1.75; }
+  .obj strong { font-weight:700; }
+
+  /* ── INFO BOXES ── */
+  .info { display:flex; gap:12px; padding:14px 16px; border-radius:6px; margin:14px 0; font-size:13.5px; line-height:1.6; }
+  .info.blue   { background:var(--azul-bg);    border:1px solid rgba(59,130,246,.25); color:#1e40af; }
+  .info.green  { background:var(--verde-bg);   border:1px solid rgba(5,150,105,.25);  color:#065f46; }
+  .info.orange { background:var(--naranja-bg); border:1px solid rgba(217,119,6,.25);  color:#92400e; }
+  .info.red    { background:var(--rojo-bg);    border:1px solid rgba(220,38,38,.25);  color:#7f1d1d; }
+  .info .ico   { font-size:18px; flex-shrink:0; margin-top:1px; }
+
+  /* ── THEORY GRID ── */
+  .t-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:14px; }
+  .t-card {
+    background:var(--g50); border:1px solid var(--g200); border-radius:8px;
+    padding:20px; border-top:3px solid; transition:box-shadow .2s, transform .2s;
+  }
+  .t-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.08); transform:translateY(-2px); }
+  .t-card.g  { border-top-color:var(--verde); }
+  .t-card.b  { border-top-color:var(--azul); }
+  .t-card.o  { border-top-color:var(--naranja); }
+  .t-card.r  { border-top-color:var(--rojo); }
+  .t-card.p  { border-top-color:var(--morado); }
+  .t-ico   { font-size:26px; margin-bottom:10px; }
+  .t-lbl   { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--g500); margin-bottom:6px; }
+  .t-body  { font-size:13.5px; color:var(--g700); line-height:1.65; }
+  .t-body strong { color:var(--g900); }
+  .t-body code { font-family:var(--mono); font-size:12px; background:#fff; border:1px solid var(--g200); padding:1px 5px; border-radius:3px; color:var(--azul); }
+
+  /* ── CIRCUIT COMPARISON ── */
+  .circ-compare { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media(max-width:600px) { .circ-compare { grid-template-columns:1fr; } }
+  .circ-card { border:1px solid var(--g200); border-radius:8px; overflow:hidden; }
+  .circ-hdr { padding:14px 18px; font-weight:700; font-size:15px; display:flex; align-items:center; gap:10px; }
+  .circ-hdr.serie  { background:#ECFDF5; color:#065f46; }
+  .circ-hdr.paral  { background:#EFF6FF; color:#1e40af; }
+  .circ-body { padding:16px 18px; background:#fff; }
+  .circ-prop { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--g100); font-size:13px; }
+  .circ-prop:last-child { border-bottom:none; }
+  .circ-key   { color:var(--g500); font-weight:500; }
+  .circ-val   { color:var(--g900); font-weight:600; font-size:13px; }
+  .circ-val.green { color:var(--verde); }
+  .circ-val.blue  { color:var(--azul); }
+  .circ-val.red   { color:var(--rojo); }
+
+  /* ── SVG DIAGRAMS ── */
+  .diagram-wrap { background:var(--g50); border:1px solid var(--g200); border-radius:8px; padding:20px; text-align:center; margin:14px 0; }
+  .diagram-title { font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:2px; color:var(--g500); margin-bottom:14px; }
+
+  /* ── MULTIMETER TABLE ── */
+  .mm-table { width:100%; border-collapse:collapse; font-size:14px; border:1px solid var(--g200); border-radius:8px; overflow:hidden; }
+  .mm-table th { background:var(--verde); color:#fff; padding:10px 14px; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+  .mm-table td { padding:10px 14px; border-bottom:1px solid var(--g200); vertical-align:top; }
+  .mm-table tr:last-child td { border-bottom:none; }
+  .mm-table tr:nth-child(even) td { background:var(--g50); }
+  .mm-symbol { font-family:var(--mono); font-size:16px; font-weight:700; color:var(--verde); }
+  .mm-name   { font-weight:600; color:var(--g900); font-size:14px; }
+  .mm-desc   { font-size:13px; color:var(--g700); line-height:1.5; }
+  .mm-range  { font-size:12px; font-family:var(--mono); color:var(--azul); background:var(--azul-bg); padding:2px 6px; border-radius:3px; }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap { border:1px solid var(--g200); border-radius:8px; overflow:hidden; margin:16px 0; }
+  .code-hdr  { background:var(--g800); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; }
+  .code-name { font-family:var(--mono); font-size:12px; color:#9CA3AF; display:flex; align-items:center; gap:8px; }
+  .code-name::before { content:''; width:8px; height:8px; background:#34D399; border-radius:50%; }
+  .code-dots { display:flex; gap:5px; }
+  .cd { width:10px; height:10px; border-radius:50%; }
+  .cd.r { background:#EF4444; } .cd.y { background:#F59E0B; } .cd.g { background:#10B981; }
+  .code-body { background:#0D1117; padding:20px; font-family:var(--mono); font-size:13px; line-height:1.9; overflow-x:auto; color:#c9d1d9; }
+  .co { color:#6E7681; font-style:italic; }
+  .kw { color:#FF7B72; }
+  .fn { color:#D2A8FF; }
+  .nm { color:#79C0FF; }
+  .vr { color:#FFA657; }
+
+  /* ── EXPERIMENTS ── */
+  .exp-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:14px; }
+  .exp-card { border:1px solid var(--g200); border-radius:8px; overflow:hidden; }
+  .exp-hdr  { padding:14px 18px; display:flex; align-items:center; gap:12px; }
+  .exp-num  { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:12px; font-weight:700; flex-shrink:0; }
+  .e1 .exp-hdr { background:var(--verde-bg); } .e1 .exp-num { background:var(--verde); color:#fff; } .e1 .exp-title { color:#065f46; }
+  .e2 .exp-hdr { background:var(--azul-bg);  } .e2 .exp-num { background:var(--azul);  color:#fff; } .e2 .exp-title { color:#1e40af; }
+  .e3 .exp-hdr { background:var(--naranja-bg); } .e3 .exp-num { background:var(--naranja); color:#fff; } .e3 .exp-title { color:#92400e; }
+  .exp-title { font-size:14px; font-weight:700; }
+  .exp-body  { padding:16px 18px; background:#fff; }
+  .exp-desc  { font-size:13px; color:var(--g700); line-height:1.6; margin-bottom:14px; }
+  .step-list { list-style:none; }
+  .step-list li { display:flex; align-items:flex-start; gap:10px; font-size:13px; line-height:1.5; margin-bottom:8px; color:var(--g700); }
+  .step-list li::before { content:attr(data-n); min-width:20px; height:20px; border-radius:50%; background:var(--g200); color:var(--g700); font-family:var(--mono); font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+
+  /* ── PROJECT BANNER ── */
+  .proy-banner { background:linear-gradient(135deg,var(--g900) 0%,#064e3b 100%); border-radius:10px; padding:28px 32px; color:#fff; display:flex; align-items:center; gap:24px; flex-wrap:wrap; }
+  .proy-ico   { font-size:52px; flex-shrink:0; }
+  .proy-cnt   { flex:1; min-width:200px; }
+  .proy-tag   { font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:2px; color:#6EE7B7; margin-bottom:6px; }
+  .proy-title { font-size:26px; font-weight:800; letter-spacing:-.5px; margin-bottom:8px; }
+  .proy-desc  { font-size:14px; color:#9CA3AF; line-height:1.6; }
+  .proy-steps { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:16px 20px; min-width:240px; }
+  .proy-steps-title { font-size:11px; font-family:var(--mono); text-transform:uppercase; letter-spacing:1.5px; color:#6B7280; margin-bottom:12px; }
+  .proy-step { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:#D1D5DB; margin-bottom:8px; }
+  .proy-step::before { content:''; width:6px; height:6px; border-radius:50%; background:#6EE7B7; flex-shrink:0; margin-top:5px; }
+
+  /* ── 3D DESIGN ── */
+  .d3d-card { background:var(--naranja-bg); border-left:4px solid var(--naranja); border-radius:0 8px 8px 0; padding:20px 24px; display:flex; align-items:center; gap:20px; }
+  .d3d-ico { font-size:38px; flex-shrink:0; }
+  .d3d-h { font-size:16px; font-weight:700; color:#92400e; margin-bottom:4px; }
+  .d3d-p { font-size:13px; color:#78350f; line-height:1.6; }
+
+  /* ── TIPS ── */
+  .tips-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; }
+  .tip { background:#fff; border:1px solid var(--g200); border-radius:8px; padding:16px; border-top:3px solid; }
+  .tip.g { border-top-color:var(--verde-l); } .tip.b { border-top-color:var(--azul); }
+  .tip.o { border-top-color:var(--naranja); } .tip.r { border-top-color:var(--rojo); }
+  .tip-ico   { font-size:18px; margin-bottom:7px; }
+  .tip-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--g700); margin-bottom:4px; }
+  .tip-body  { font-size:13px; color:var(--g500); line-height:1.5; }
+
+  /* ── FOOTER ── */
+  footer { background:var(--g100); border-top:1px solid var(--g200); padding:22px 32px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:60px; font-size:12px; color:var(--g500); font-family:var(--mono); }
+  footer strong { color:var(--g700); }
+
+  .divider { height:1px; background:var(--g200); margin:24px 0; }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="breadcrumb">
+      <span>Maker Lab</span>
+      <span class="breadcrumb-sep">›</span>
+      <span>Módulo 1: Fundamentos con Arduino</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-now">Clase 3</span>
+    </div>
+    <h1>Tipos de<br><span class="hl">Circuitos</span></h1>
+    <p class="header-sub">Circuitos en serie · Circuitos en paralelo · Multímetro · Protoboard</p>
+    <div class="pills">
+      <span class="pill"><span class="pill-dot"></span>Clase 3 de 16</span>
+      <span class="pill">Módulo 1</span>
+      <span class="pill">Teoría + 3 Experimentos</span>
+      <span class="pill">Proyecto: Secuenciador de LEDs</span>
+      <span class="pill">3D: Árbol de navidad</span>
+    </div>
+  </div>
+  <div class="prog-strip">
+    <span class="prog-lbl">PROGRESO M1:</span>
+    <div class="prog-track">
+      <div class="prog-seg done"></div>
+      <div class="prog-seg done"></div>
+      <div class="prog-seg now"></div>
+      <div class="prog-seg"></div><div class="prog-seg"></div><div class="prog-seg"></div>
+      <div class="prog-seg"></div><div class="prog-seg"></div><div class="prog-seg"></div>
+      <div class="prog-seg"></div><div class="prog-seg"></div><div class="prog-seg"></div>
+      <div class="prog-seg"></div><div class="prog-seg"></div><div class="prog-seg"></div>
+      <div class="prog-seg"></div>
+    </div>
+    <span class="prog-lbl">3/16</span>
+  </div>
+</header>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════════ -->
+<main class="wrap">
+
+  <!-- OBJETIVO -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">objetivo</span><div class="sec-line"></div></div>
+    <h2>¿Qué aprenderemos hoy?</h2>
+    <div class="obj">
+      <p>Comprender la diferencia entre <strong>circuitos en serie y en paralelo</strong>, aprender a usar el <strong>multímetro</strong> para medir voltaje, corriente y continuidad, y dominar el uso de la <strong>protoboard</strong> para construir circuitos sin soldar. Al final construiremos el <strong>Secuenciador de LEDs</strong>, el primer proyecto que combina hardware y programación Arduino de manera creativa.</p>
+    </div>
+  </section>
+
+  <!-- TEORIA -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">teoría</span><div class="sec-line"></div></div>
+    <h2>Tipos de circuitos</h2>
+
+    <div class="t-grid">
+      <div class="t-card g">
+        <div class="t-ico">🔗</div>
+        <div class="t-lbl">Circuito en Serie</div>
+        <div class="t-body">Los componentes se conectan <strong>uno tras otro</strong> formando un solo camino para la corriente. Si un componente falla, <strong>todo el circuito se interrumpe</strong>. El voltaje se divide entre los componentes, pero la corriente es la misma en todo el circuito.</div>
+      </div>
+      <div class="t-card b">
+        <div class="t-ico">⑂</div>
+        <div class="t-lbl">Circuito en Paralelo</div>
+        <div class="t-body">Los componentes se conectan entre los <strong>mismos dos puntos</strong> formando ramas independientes. Si un componente falla, <strong>los demás siguen funcionando</strong>. El voltaje es el mismo en cada rama, pero la corriente se divide.</div>
+      </div>
+      <div class="t-card o">
+        <div class="t-ico">🔬</div>
+        <div class="t-lbl">Multímetro</div>
+        <div class="t-body">Instrumento que mide <strong>voltaje (V)</strong>, <strong>corriente (A)</strong> y <strong>resistencia (Ω)</strong>. También sirve para medir la <strong>continuidad</strong> de un circuito (si hay paso de corriente). Es la herramienta de diagnóstico fundamental en electrónica.</div>
+      </div>
+      <div class="t-card r">
+        <div class="t-ico">🧩</div>
+        <div class="t-lbl">Protoboard</div>
+        <div class="t-body">Placa de pruebas con filas y columnas de <strong>orificios interconectados</strong> que permiten conectar componentes sin soldar. Las <strong>filas horizontales</strong> en el centro están conectadas internamente. Las <strong>columnas laterales</strong> (rojas y negras) son los buses de alimentación.</div>
+      </div>
+      <div class="t-card p">
+        <div class="t-ico">⚡</div>
+        <div class="t-lbl">Ley de Ohm</div>
+        <div class="t-body">Relaciona las tres magnitudes eléctricas fundamentales: <strong>V = I × R</strong> (Voltaje = Corriente × Resistencia). En un circuito con Arduino de 5V y una resistencia de 220Ω, la corriente que pasa por el LED es aproximadamente 22mA — suficiente para encenderlo sin dañarlo.</div>
+      </div>
+      <div class="t-card g">
+        <div class="t-ico">🔄</div>
+        <div class="t-lbl">Secuenciador de LEDs</div>
+        <div class="t-body">Circuito donde varios LEDs se encienden y apagan en <strong>secuencia programada</strong>. Combina el conocimiento de circuitos (conexiones de LEDs con resistencias en protoboard) con la programación Arduino (<code>digitalWrite</code> y <code>delay</code>) para crear animaciones de luz.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARATIVA SERIE vs PARALELO -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">comparativa</span><div class="sec-line"></div></div>
+    <h2>Serie vs. Paralelo — diferencias clave</h2>
+
+    <div class="circ-compare">
+      <div class="circ-card">
+        <div class="circ-hdr serie">🔗 Circuito en SERIE</div>
+        <div class="circ-body">
+          <div class="circ-prop"><span class="circ-key">Conexión</span><span class="circ-val">Uno tras otro (cadena)</span></div>
+          <div class="circ-prop"><span class="circ-key">Corriente (I)</span><span class="circ-val green">Igual en todos</span></div>
+          <div class="circ-prop"><span class="circ-key">Voltaje (V)</span><span class="circ-val red">Se divide</span></div>
+          <div class="circ-prop"><span class="circ-key">Si uno falla</span><span class="circ-val red">Todo se apaga</span></div>
+          <div class="circ-prop"><span class="circ-key">Resistencia total</span><span class="circ-val">R₁ + R₂ + R₃...</span></div>
+          <div class="circ-prop"><span class="circ-key">Ejemplo real</span><span class="circ-val">Luces de navidad antiguas</span></div>
+        </div>
+      </div>
+      <div class="circ-card">
+        <div class="circ-hdr paral">⑂ Circuito en PARALELO</div>
+        <div class="circ-body">
+          <div class="circ-prop"><span class="circ-key">Conexión</span><span class="circ-val">Ramas independientes</span></div>
+          <div class="circ-prop"><span class="circ-key">Voltaje (V)</span><span class="circ-val blue">Igual en todas las ramas</span></div>
+          <div class="circ-prop"><span class="circ-key">Corriente (I)</span><span class="circ-val">Se divide por ramas</span></div>
+          <div class="circ-prop"><span class="circ-key">Si uno falla</span><span class="circ-val green">Los demás siguen</span></div>
+          <div class="circ-prop"><span class="circ-key">Resistencia total</span><span class="circ-val">1/(1/R₁+1/R₂+...)</span></div>
+          <div class="circ-prop"><span class="circ-key">Ejemplo real</span><span class="circ-val">Enchufes del hogar, LEDs Arduino</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="diagram-wrap" style="margin-top:16px;">
+      <div class="diagram-title">DIAGRAMAS VISUALES</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:center;">
+        <div>
+          <p style="font-size:12px; color:var(--g500); margin-bottom:10px; font-family:var(--mono); text-align:center;">EN SERIE — un solo camino</p>
+          <svg viewBox="0 0 280 100" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <!-- Battery -->
+            <rect x="10" y="35" width="30" height="30" rx="3" fill="#ECFDF5" stroke="#059669" stroke-width="1.5"/>
+            <text x="25" y="54" text-anchor="middle" fill="#059669" font-size="9" font-family="monospace">5V</text>
+            <!-- Wire top -->
+            <line x1="40" y1="40" x2="260" y2="40" stroke="#374151" stroke-width="2"/>
+            <!-- Wire bottom -->
+            <line x1="40" y1="60" x2="260" y2="60" stroke="#374151" stroke-width="2"/>
+            <!-- Connect ends -->
+            <line x1="260" y1="40" x2="260" y2="60" stroke="#374151" stroke-width="2"/>
+            <!-- R1 -->
+            <rect x="70" y="32" width="30" height="16" rx="2" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"/>
+            <text x="85" y="44" text-anchor="middle" fill="#D97706" font-size="8" font-family="monospace">220Ω</text>
+            <!-- LED1 -->
+            <polygon points="110,33 110,47 124,40" fill="rgba(239,68,68,.3)" stroke="#EF4444" stroke-width="1.5"/>
+            <line x1="124" y1="33" x2="124" y2="47" stroke="#EF4444" stroke-width="1.5"/>
+            <!-- R2 -->
+            <rect x="140" y="32" width="30" height="16" rx="2" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"/>
+            <text x="155" y="44" text-anchor="middle" fill="#D97706" font-size="8" font-family="monospace">220Ω</text>
+            <!-- LED2 -->
+            <polygon points="180,33 180,47 194,40" fill="rgba(59,130,246,.3)" stroke="#3B82F6" stroke-width="1.5"/>
+            <line x1="194" y1="33" x2="194" y2="47" stroke="#3B82F6" stroke-width="1.5"/>
+            <!-- Labels -->
+            <text x="85" y="80" text-anchor="middle" fill="#6B7280" font-size="8">Corriente: 22mA</text>
+            <text x="200" y="80" text-anchor="middle" fill="#6B7280" font-size="8">V se divide: 2.5V c/u</text>
+          </svg>
+        </div>
+        <div>
+          <p style="font-size:12px; color:var(--g500); margin-bottom:10px; font-family:var(--mono); text-align:center;">EN PARALELO — ramas independientes</p>
+          <svg viewBox="0 0 280 120" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <!-- Battery -->
+            <rect x="10" y="45" width="30" height="30" rx="3" fill="#EFF6FF" stroke="#1A56DB" stroke-width="1.5"/>
+            <text x="25" y="64" text-anchor="middle" fill="#1A56DB" font-size="9" font-family="monospace">5V</text>
+            <!-- Bus lines -->
+            <line x1="40" y1="50" x2="250" y2="50" stroke="#374151" stroke-width="2"/>
+            <line x1="40" y1="70" x2="250" y2="70" stroke="#374151" stroke-width="2"/>
+            <!-- Branch 1 -->
+            <line x1="100" y1="50" x2="100" y2="25" stroke="#374151" stroke-width="1.5"/>
+            <rect x="85" y="10" width="30" height="14" rx="2" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"/>
+            <text x="100" y="21" text-anchor="middle" fill="#D97706" font-size="7" font-family="monospace">220Ω</text>
+            <polygon points="100,25 100,37 112,31" fill="rgba(239,68,68,.3)" stroke="#EF4444" stroke-width="1.5"/>
+            <line x1="112" y1="25" x2="112" y2="37" stroke="#EF4444" stroke-width="1.5"/>
+            <line x1="112" y1="31" x2="130" y2="31" stroke="#374151" stroke-width="1.5"/>
+            <line x1="130" y1="31" x2="130" y2="70" stroke="#374151" stroke-width="1.5"/>
+            <!-- Branch 2 -->
+            <line x1="180" y1="50" x2="180" y2="25" stroke="#374151" stroke-width="1.5"/>
+            <rect x="165" y="10" width="30" height="14" rx="2" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"/>
+            <text x="180" y="21" text-anchor="middle" fill="#D97706" font-size="7" font-family="monospace">220Ω</text>
+            <polygon points="180,25 180,37 192,31" fill="rgba(16,185,129,.3)" stroke="#10B981" stroke-width="1.5"/>
+            <line x1="192" y1="25" x2="192" y2="37" stroke="#10B981" stroke-width="1.5"/>
+            <line x1="192" y1="31" x2="210" y2="31" stroke="#374151" stroke-width="1.5"/>
+            <line x1="210" y1="31" x2="210" y2="70" stroke="#374151" stroke-width="1.5"/>
+            <!-- Labels -->
+            <text x="130" y="100" text-anchor="middle" fill="#6B7280" font-size="8">5V en cada rama</text>
+            <text x="200" y="100" text-anchor="middle" fill="#6B7280" font-size="8">Corriente independiente</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MULTIMETRO -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">herramienta</span><div class="sec-line"></div></div>
+    <h2>El Multímetro — guía de uso</h2>
+
+    <div class="info orange">
+      <span class="ico">⚠️</span>
+      <span><strong>Seguridad primero:</strong> Nunca midas corriente directamente en una fuente de alimentación sin resistencia. Siempre selecciona el rango correcto antes de medir. Las puntas roja (+) y negra (−/COM) deben estar en los puertos correctos.</span>
+    </div>
+
+    <table class="mm-table">
+      <thead><tr><th>Símbolo</th><th>Función</th><th>Rango a usar</th><th>Cómo conectar las puntas</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div class="mm-symbol">V</div></td>
+          <td><div class="mm-name">Voltaje DC (corriente directa)</div><div class="mm-desc">Mide la diferencia de potencial entre dos puntos del circuito</div></td>
+          <td><div class="mm-range">20V DC</div></td>
+          <td class="mm-desc">Roja al punto positivo, negra al GND. En <strong>paralelo</strong> con el componente.</td>
+        </tr>
+        <tr>
+          <td><div class="mm-symbol">A</div></td>
+          <td><div class="mm-name">Corriente (mA)</div><div class="mm-desc">Mide cuánta corriente fluye por el circuito</div></td>
+          <td><div class="mm-range">200mA</div></td>
+          <td class="mm-desc">En <strong>serie</strong> con el circuito — hay que romper el circuito para insertar el multímetro.</td>
+        </tr>
+        <tr>
+          <td><div class="mm-symbol">Ω</div></td>
+          <td><div class="mm-name">Resistencia (Ohms)</div><div class="mm-desc">Mide la oposición al paso de la corriente</div></td>
+          <td><div class="mm-range">2kΩ</div></td>
+          <td class="mm-desc">Con el componente <strong>desconectado del circuito</strong>. Punta en cada extremo.</td>
+        </tr>
+        <tr>
+          <td><div class="mm-symbol">))))</div></td>
+          <td><div class="mm-name">Continuidad (beep)</div><div class="mm-desc">Suena si hay paso de corriente — verifica conexiones y cables</div></td>
+          <td><div class="mm-range">Diode/Buzzer</div></td>
+          <td class="mm-desc">Toca los dos extremos del cable o conexión que quieres verificar.</td>
+        </tr>
+        <tr>
+          <td><div class="mm-symbol">→|</div></td>
+          <td><div class="mm-name">Diodo / LED</div><div class="mm-desc">Prueba la polaridad del LED y verifica que funciona</div></td>
+          <td><div class="mm-range">Diode</div></td>
+          <td class="mm-desc">Roja al ánodo (+), negra al cátodo (−). El LED debe brillar levemente.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PROTOBOARD -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">herramienta</span><div class="sec-line"></div></div>
+    <h2>Cómo funciona la Protoboard</h2>
+
+    <div class="diagram-wrap">
+      <div class="diagram-title">MAPA DE CONEXIONES INTERNAS</div>
+      <svg viewBox="0 0 500 180" width="100%" style="max-width:500px" xmlns="http://www.w3.org/2000/svg">
+        <!-- Bus lines top -->
+        <rect x="10" y="10" width="480" height="22" rx="3" fill="#FEF2F2" stroke="#DC2626" stroke-width="1"/>
+        <line x1="10" y1="16" x2="490" y2="16" stroke="#DC2626" stroke-width="2" stroke-dasharray="8,3"/>
+        <text x="250" y="26" text-anchor="middle" fill="#DC2626" font-size="9" font-family="monospace">+ (5V / VCC) — bus positivo horizontal</text>
+        <rect x="10" y="34" width="480" height="22" rx="3" fill="#F0FDF4" stroke="#059669" stroke-width="1"/>
+        <line x1="10" y1="40" x2="490" y2="40" stroke="#059669" stroke-width="2" stroke-dasharray="8,3"/>
+        <text x="250" y="50" text-anchor="middle" fill="#059669" font-size="9" font-family="monospace">− (GND) — bus negativo horizontal</text>
+        <!-- Middle zone -->
+        <rect x="10" y="62" width="480" height="56" rx="3" fill="#F9FAFB" stroke="#D1D5DB" stroke-width="1"/>
+        <text x="250" y="78" text-anchor="middle" fill="#374151" font-size="10" font-family="monospace" font-weight="bold">ZONA CENTRAL — filas verticales (a–e) y (f–j)</text>
+        <text x="250" y="96" text-anchor="middle" fill="#6B7280" font-size="9" font-family="monospace">Cada fila de 5 orificios está conectada INTERNAMENTE ↕</text>
+        <text x="250" y="112" text-anchor="middle" fill="#6B7280" font-size="9" font-family="monospace">El canal central SEPARA las dos mitades (a–e ≠ f–j)</text>
+        <!-- Bus lines bottom -->
+        <rect x="10" y="124" width="480" height="22" rx="3" fill="#F0FDF4" stroke="#059669" stroke-width="1"/>
+        <line x1="10" y1="130" x2="490" y2="130" stroke="#059669" stroke-width="2" stroke-dasharray="8,3"/>
+        <text x="250" y="140" text-anchor="middle" fill="#059669" font-size="9" font-family="monospace">− (GND) — bus negativo horizontal</text>
+        <rect x="10" y="148" width="480" height="22" rx="3" fill="#FEF2F2" stroke="#DC2626" stroke-width="1"/>
+        <line x1="10" y1="154" x2="490" y2="154" stroke="#DC2626" stroke-width="2" stroke-dasharray="8,3"/>
+        <text x="250" y="164" text-anchor="middle" fill="#DC2626" font-size="9" font-family="monospace">+ (5V / VCC) — bus positivo horizontal</text>
+      </svg>
+    </div>
+
+    <div class="info green">
+      <span class="ico">💡</span>
+      <div><strong>Regla de oro:</strong> En la zona central, los 5 orificios de la <em>misma fila</em> (ej. fila 10: pines 10a, 10b, 10c, 10d, 10e) están conectados entre sí. Dos filas diferentes NO están conectadas aunque estén en la misma columna.</div>
+    </div>
+  </section>
+
+  <!-- EXPERIMENTOS -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">experimentos</span><div class="sec-line"></div></div>
+    <h2>Los 3 experimentos de la clase</h2>
+
+    <div class="exp-grid">
+      <div class="exp-card e1">
+        <div class="exp-hdr">
+          <div class="exp-num">1</div>
+          <div class="exp-title">Uso del multímetro</div>
+        </div>
+        <div class="exp-body">
+          <p class="exp-desc">Aprender a usar el multímetro para medir voltaje, resistencia y continuidad en circuitos reales. Verificar el valor de resistencias con el código de colores.</p>
+          <ul class="step-list">
+            <li data-n="1">Medir el voltaje de la protoboard conectada al Arduino (esperar 5V)</li>
+            <li data-n="2">Medir la resistencia de una resistencia de 220Ω y verificar la lectura</li>
+            <li data-n="3">Probar continuidad de un cable (debe sonar el beep)</li>
+            <li data-n="4">Probar continuidad de un cable roto o doblado</li>
+            <li data-n="5">Medir la caída de voltaje en un LED encendido (~2V)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-card e2">
+        <div class="exp-hdr">
+          <div class="exp-num">2</div>
+          <div class="exp-title">Circuitos en serie y paralelo</div>
+        </div>
+        <div class="exp-body">
+          <p class="exp-desc">Construir y comparar ambos tipos de circuito con LEDs. Observar la diferencia de brillo y verificar qué pasa cuando se desconecta un LED.</p>
+          <ul class="step-list">
+            <li data-n="1">Conectar 3 LEDs en <strong>serie</strong> con 1 resistencia entre pin 13 y GND</li>
+            <li data-n="2">Observar el brillo (más opaco por la división de voltaje)</li>
+            <li data-n="3">Desconectar un LED — ¿qué pasa? (se apagan todos)</li>
+            <li data-n="4">Conectar los mismos 3 LEDs en <strong>paralelo</strong> (cada uno con su resistencia)</li>
+            <li data-n="5">Comparar el brillo con el circuito en serie — notar la diferencia</li>
+            <li data-n="6">Desconectar un LED en paralelo — ¿los demás siguen? (sí)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-card e3">
+        <div class="exp-hdr">
+          <div class="exp-num">3</div>
+          <div class="exp-title">Uso de protoboard</div>
+        </div>
+        <div class="exp-body">
+          <p class="exp-desc">Construir el circuito del Secuenciador de LEDs directamente en la protoboard, conectando los 3 LEDs a los pines del Arduino con la lógica de conexión interna de la placa.</p>
+          <ul class="step-list">
+            <li data-n="1">Conectar el cable de 5V al bus positivo (+) de la protoboard</li>
+            <li data-n="2">Conectar GND al bus negativo (−) de la protoboard</li>
+            <li data-n="3">Insertar 3 LEDs en la zona central — uno por fila</li>
+            <li data-n="4">Agregar una resistencia de 220Ω en serie con cada LED</li>
+            <li data-n="5">Conectar cada resistencia a un pin digital del Arduino (11, 12, 13)</li>
+            <li data-n="6">Conectar el cátodo de cada LED al bus negativo (GND)</li>
+            <li data-n="7">Subir el código del secuenciador y ver la animación</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CODIGO SECUENCIADOR -->
+    <h2 style="font-size:18px;margin-bottom:14px;">Código: Secuenciador de LEDs</h2>
+    <div class="code-wrap">
+      <div class="code-hdr">
+        <div class="cd-dots"><div class="cd r"></div><div class="cd y"></div><div class="cd g"></div></div>
+        <div class="code-name">secuenciador_leds.ino</div>
+        <div></div>
+      </div>
+      <div class="code-body"><span class="co">// ─── Módulo 1 · Clase 3 · Secuenciador de LEDs ──────────────</span>
+<span class="co">// LEDs conectados en protoboard — pines 11, 12, 13</span>
+
+<span class="vr">int</span> led1 = <span class="nm">11</span>;   <span class="co">// LED rojo</span>
+<span class="vr">int</span> led2 = <span class="nm">12</span>;   <span class="co">// LED amarillo</span>
+<span class="vr">int</span> led3 = <span class="nm">13</span>;   <span class="co">// LED verde</span>
+<span class="vr">int</span> espera = <span class="nm">300</span>; <span class="co">// ms entre cada LED</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">pinMode</span>(led1, OUTPUT);
+  <span class="fn">pinMode</span>(led2, OUTPUT);
+  <span class="fn">pinMode</span>(led3, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="co">// ── IDA: LED 1 → 2 → 3 ──────────────────────</span>
+  <span class="fn">digitalWrite</span>(led1, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led1, LOW);
+  <span class="fn">digitalWrite</span>(led2, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led2, LOW);
+  <span class="fn">digitalWrite</span>(led3, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led3, LOW);
+
+  <span class="co">// ── VUELTA: LED 3 → 2 → 1 ───────────────────</span>
+  <span class="fn">digitalWrite</span>(led3, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led3, LOW);
+  <span class="fn">digitalWrite</span>(led2, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led2, LOW);
+  <span class="fn">digitalWrite</span>(led1, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led1, LOW);
+}</div>
+    </div>
+  </section>
+
+  <!-- PROYECTO -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">proyecto</span><div class="sec-line"></div></div>
+    <h2>Proyecto: Secuenciador de LEDs</h2>
+    <div class="proy-banner">
+      <div class="proy-ico">💡</div>
+      <div class="proy-cnt">
+        <div class="proy-tag">PROYECTO CLASE 3</div>
+        <div class="proy-title">Secuenciador de LEDs</div>
+        <p class="proy-desc">Crear una animación con múltiples LEDs conectados en protoboard. Cada estudiante diseña su propia secuencia de luz, combinando el tipo de circuito, los tiempos y el patrón de encendido de manera <strong>personalizada y creativa</strong>.</p>
+      </div>
+      <div class="proy-steps">
+        <div class="proy-steps-title">Pasos del proyecto</div>
+        <div class="proy-step">Conectar correctamente la protoboard al Arduino</div>
+        <div class="proy-step">Insertar 3 o más LEDs con sus resistencias</div>
+        <div class="proy-step">Escribir la secuencia básica ida y vuelta</div>
+        <div class="proy-step">Personalizar: velocidad, patrón, orden</div>
+        <div class="proy-step">Reto: crear al menos 3 patrones diferentes</div>
+        <div class="proy-step">Agregar una pausa dramática al final</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISEÑO 3D -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">diseño 3D</span><div class="sec-line"></div></div>
+    <div class="d3d-card">
+      <div class="d3d-ico">🎄</div>
+      <div>
+        <div class="d3d-h">Árbol de navidad</div>
+        <p class="d3d-p">En Tinkercad CAD diseñamos un <strong>árbol de navidad en 3D</strong>. El reto técnico es crear las capas del árbol usando <strong>conos decrecientes</strong> apilados, un tronco cilíndrico y decoraciones esféricas. Se practica la <strong>alineación de objetos</strong>, el uso del eje Z (altura) y la composición de múltiples piezas simétricas. Posteriormente se puede imprimir en la impresora 3D del lab.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIPS -->
+  <section class="section">
+    <div class="sec-hdr"><span class="sec-tag">claves</span><div class="sec-line"></div></div>
+    <h2>Tips para la clase</h2>
+    <div class="tips-grid">
+      <div class="tip g"><div class="tip-ico">🧩</div><div class="tip-title">Protoboard: verifica filas</div><div class="tip-body">Cada fila de 5 orificios está conectada internamente. Nunca pongas dos pines de la misma fila que no deben tocarse.</div></div>
+      <div class="tip b"><div class="tip-ico">🔬</div><div class="tip-title">Multímetro: rango correcto</div><div class="tip-body">Selecciona siempre el rango más alto y ve bajando. Nunca midas voltaje con la perilla en Ω (puede dañar el equipo).</div></div>
+      <div class="tip o"><div class="tip-ico">💡</div><div class="tip-title">LEDs más brillantes</div><div class="tip-body">En paralelo cada LED recibe los 5V completos → brillo máximo. En serie el voltaje se divide → menos brillo.</div></div>
+      <div class="tip r"><div class="tip-ico">⚡</div><div class="tip-title">Resistencia siempre</div><div class="tip-body">Aunque en paralelo cada LED funciona independientemente, CADA uno necesita su propia resistencia de 220Ω.</div></div>
+      <div class="tip g"><div class="tip-ico">🔍</div><div class="tip-title">Diagnóstico rápido</div><div class="tip-body">¿LED no enciende? Usa el multímetro en modo diodo para verificar si el LED funciona antes de revisar el código.</div></div>
+      <div class="tip b"><div class="tip-ico">🎯</div><div class="tip-title">Personaliza el proyecto</div><div class="tip-body">Cambia la variable "espera" para velocidades distintas. Prueba encender dos LEDs al mismo tiempo en algunos pasos.</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span><strong>Maker Lab</strong> — Material del Coach · Módulo 1 · Clase 3</span>
+  <span>Proyecto: Secuenciador de LEDs · Diseño 3D: Árbol de navidad</span>
+</footer>
+</body>
+</html>
