@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía de Trabajo · Clase 3 · Tipos de Circuitos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8FAFC; --white:#fff;
+  --green:#059669; --gl:#10B981; --gbg:#ECFDF5;
+  --blue:#1A56DB;  --bbg:#EFF6FF;
+  --orange:#D97706; --obg:#FFFBEB;
+  --red:#DC2626; --rbg:#FEF2F2;
+  --purple:#7C3AED;
+  --g900:#111827; --g800:#1F2937; --g700:#374151;
+  --g500:#6B7280; --g300:#D1D5DB; --g200:#E5E7EB; --g100:#F3F4F6; --g50:#F9FAFB;
+  --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif;
+  --r:8px; --sh:0 1px 3px rgba(0,0,0,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--g800)}
+
+/* ── NAV ── */
+.nav{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--g200);
+     height:56px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;
+     box-shadow:var(--sh)}
+.nav-l{display:flex;align-items:center;gap:14px}
+.nav-logo{font-weight:800;font-size:15px;color:var(--green)}
+.nav-sep{color:var(--g300);font-size:18px}
+.nav-title{font-size:14px;color:var(--g500);font-weight:500}
+.nav-timer{font-family:var(--mono);font-size:13px;color:var(--green);font-weight:600}
+.nav-dots{display:flex;gap:4px}
+.nd{width:28px;height:28px;border-radius:50%;border:2px solid var(--g200);background:#fff;
+    font-size:11px;font-family:var(--mono);font-weight:600;color:var(--g500);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:.2s}
+.nd:hover{border-color:var(--gl);color:var(--gl)}
+.nd.active{border-color:var(--green);background:var(--green);color:#fff}
+.nd.done{border-color:var(--gl);background:var(--gl);color:#fff}
+
+/* ── WRAP ── */
+.wrap{max-width:880px;margin:0 auto;padding:0 24px 80px}
+.page{display:none}
+.page.active{display:block}
+
+/* ── STEP HEADER ── */
+.sh{padding:40px 0 28px;border-bottom:1px solid var(--g200);margin-bottom:32px}
+.sb{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-family:var(--mono);
+    font-weight:600;color:var(--green);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.sc{width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.sh h1{font-size:clamp(22px,4vw,36px);font-weight:800;letter-spacing:-1.2px;margin-bottom:6px}
+.sh p{font-size:15px;color:var(--g500)}
+.tbadge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+        background:var(--obg);border:1px solid rgba(217,119,6,.2);color:var(--orange);
+        font-size:12px;font-family:var(--mono);padding:4px 12px;border-radius:20px}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid var(--g200);border-radius:var(--r);
+      padding:20px 22px;box-shadow:var(--sh);margin-bottom:12px}
+.card-t{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+        color:var(--g500);margin-bottom:10px}
+.card p{font-size:14px;line-height:1.65;color:var(--g700)}
+.card p+p{margin-top:8px}
+.card p strong{color:var(--g900)}
+
+/* ── THEORY GRID ── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.tc{background:#fff;border:1px solid var(--g200);border-radius:var(--r);
+    padding:18px;border-top:3px solid;box-shadow:var(--sh)}
+.tc.g{border-top-color:var(--green)} .tc.b{border-top-color:var(--blue)}
+.tc.o{border-top-color:var(--orange)} .tc.r{border-top-color:var(--red)}
+.tc.p{border-top-color:var(--purple)}
+.ti{font-size:22px;margin-bottom:8px}
+.tl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+    color:var(--g500);margin-bottom:5px}
+.tb{font-size:13.5px;line-height:1.6;color:var(--g700)}
+.tb strong{color:var(--g900)}
+.tb code{font-family:var(--mono);font-size:12px;background:var(--g100);padding:1px 5px;
+         border-radius:3px;color:var(--blue)}
+
+/* ── COMPARE TABLE ── */
+.ctable{width:100%;border-collapse:collapse;font-size:14px;border-radius:var(--r);overflow:hidden;border:1px solid var(--g200)}
+.ctable th{padding:11px 14px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;text-align:left}
+.ctable th.serie{background:#ECFDF5;color:#065f46}
+.ctable th.paral{background:#EFF6FF;color:#1e40af}
+.ctable th.prop{background:var(--g100);color:var(--g700)}
+.ctable td{padding:10px 14px;border-bottom:1px solid var(--g200);vertical-align:top;font-size:13px}
+.ctable tr:last-child td{border-bottom:none}
+.ctable td.prop{font-weight:500;color:var(--g700);background:var(--g50)}
+.badge-g{display:inline;background:var(--gbg);color:var(--green);border:1px solid rgba(5,150,105,.2);padding:1px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.badge-b{display:inline;background:var(--bbg);color:var(--blue);border:1px solid rgba(59,130,246,.2);padding:1px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.badge-r{display:inline;background:var(--rbg);color:var(--red);border:1px solid rgba(220,38,38,.2);padding:1px 8px;border-radius:10px;font-size:12px;font-weight:600}
+
+/* ── PROTOBOARD SIMULATOR ── */
+.proto{background:var(--g900);border-radius:var(--r);padding:24px;margin:16px 0}
+.proto-lbl{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:2px;
+           color:var(--g500);margin-bottom:16px}
+.proto-board{background:#1C3D20;border:2px solid #2D6A30;border-radius:6px;padding:16px;
+             display:flex;flex-direction:column;gap:4px;align-items:center;margin-bottom:16px}
+.proto-row{display:flex;gap:3px;align-items:center}
+.proto-row-label{font-family:var(--mono);font-size:9px;color:#4B5563;width:18px;text-align:right;margin-right:4px;flex-shrink:0}
+.ph{width:14px;height:14px;border-radius:50%;background:#0F2A12;border:1px solid #1F4A22;
+    cursor:pointer;transition:.15s;position:relative;display:flex;align-items:center;justify-content:center}
+.ph:hover{border-color:#4CAF50;background:#1a3a1a}
+.ph.used{background:#B45309;border-color:#D97706}
+.ph.used.pin{background:#1A56DB;border-color:#60A5FA}
+.ph.used.gnd{background:#374151;border-color:#9CA3AF}
+.ph.used.vcc{background:#DC2626;border-color:#F87171}
+.ph.led-r{background:#EF4444;border-color:#EF4444;box-shadow:0 0 6px rgba(239,68,68,.6)}
+.ph.led-g{background:#10B981;border-color:#10B981;box-shadow:0 0 6px rgba(16,185,129,.6)}
+.ph.led-b{background:#3B82F6;border-color:#3B82F6;box-shadow:0 0 6px rgba(59,130,246,.6)}
+.bus-row{height:6px;border-radius:3px;width:100%;margin-bottom:3px}
+.bus-r{background:repeating-linear-gradient(90deg,#DC2626 0,#DC2626 8px,transparent 8px,transparent 12px)}
+.bus-g{background:repeating-linear-gradient(90deg,#059669 0,#059669 8px,transparent 8px,transparent 12px)}
+.channel{height:8px;background:#0F2A12;border-radius:2px;width:100%;margin:4px 0}
+.proto-ctrl{display:flex;gap:8px;flex-wrap:wrap}
+.pc{font-family:var(--mono);font-size:12px;padding:7px 14px;background:var(--g800);
+    border:1px solid var(--g700);color:var(--g300);cursor:pointer;border-radius:4px;transition:.2s}
+.pc:hover{border-color:var(--gl);color:var(--gl)}
+.pc.active{background:var(--green);border-color:var(--green);color:#fff}
+.proto-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.leg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--g500);font-family:var(--mono)}
+.leg-dot{width:10px;height:10px;border-radius:50%}
+
+/* ── MULTIMETER PANEL ── */
+.mm-panel{background:var(--g900);border-radius:var(--r);padding:24px;margin:16px 0}
+.mm-display{background:#1a2a0a;border:2px solid #2a4a1a;border-radius:6px;
+            padding:14px 20px;margin-bottom:16px;text-align:center}
+.mm-val{font-family:var(--mono);font-size:36px;font-weight:700;color:#5CFF5C;letter-spacing:2px}
+.mm-unit{font-family:var(--mono);font-size:16px;color:#3CAA3C;margin-left:6px}
+.mm-mode{font-size:11px;font-family:var(--mono);color:var(--g500);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.mm-buttons{display:flex;gap:8px;flex-wrap:wrap}
+.mmb{font-family:var(--mono);font-size:12px;padding:8px 14px;background:var(--g800);
+     border:1px solid var(--g700);color:var(--g300);cursor:pointer;border-radius:4px;transition:.2s}
+.mmb:hover{border-color:var(--gl);color:var(--gl)}
+.mmb.on{background:var(--green);border-color:var(--green);color:#fff}
+.mm-tip{font-size:12px;font-family:var(--mono);color:var(--g500);margin-top:10px;min-height:18px}
+
+/* ── LED SEQUENCER ── */
+.seq-box{background:var(--g900);border-radius:var(--r);padding:24px;margin:16px 0}
+.seq-leds{display:flex;justify-content:center;gap:20px;margin-bottom:20px}
+.seq-led{display:flex;flex-direction:column;align-items:center;gap:6px}
+.led-bulb{width:44px;height:44px;border-radius:50%;background:#111827;border:2px solid #374151;
+          transition:all .2s;flex-shrink:0}
+.led-bulb.on-r{background:#EF4444;border-color:#EF4444;box-shadow:0 0 18px rgba(239,68,68,.7)}
+.led-bulb.on-y{background:#F59E0B;border-color:#F59E0B;box-shadow:0 0 18px rgba(245,158,11,.7)}
+.led-bulb.on-g{background:#10B981;border-color:#10B981;box-shadow:0 0 18px rgba(16,185,129,.7)}
+.led-lbl{font-family:var(--mono);font-size:11px;color:var(--g500)}
+.seq-ctrl{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;justify-content:center}
+.sc-btn{font-family:var(--mono);font-size:12px;padding:8px 16px;background:var(--g800);
+        border:1px solid var(--g700);color:var(--g300);cursor:pointer;border-radius:4px;transition:.2s}
+.sc-btn:hover{border-color:var(--gl);color:var(--gl)}
+.sc-btn.on{background:var(--green);border-color:var(--green);color:#fff}
+.seq-speed{display:flex;align-items:center;gap:10px}
+.seq-speed label{font-family:var(--mono);font-size:11px;color:var(--g500);white-space:nowrap}
+.seq-speed input{flex:1;accent-color:var(--green)}
+.seq-speed span{font-family:var(--mono);font-size:12px;color:var(--gl)}
+.seq-state{text-align:center;font-family:var(--mono);font-size:11px;color:var(--g500);margin-top:8px;min-height:18px}
+
+/* ── CODE ── */
+.code-wrap{border:1px solid var(--g200);border-radius:var(--r);overflow:hidden;margin:14px 0}
+.code-hdr{background:var(--g800);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.code-nm{font-family:var(--mono);font-size:12px;color:#9CA3AF;display:flex;align-items:center;gap:8px}
+.code-nm::before{content:'';width:8px;height:8px;background:var(--gl);border-radius:50%}
+.copy-btn{font-family:var(--mono);font-size:11px;color:#60A5FA;background:none;
+          border:1px solid #374151;padding:3px 10px;cursor:pointer;border-radius:3px;transition:.2s}
+.copy-btn:hover{background:#374151}
+.code-body{background:#0D1117;padding:18px 20px;font-family:var(--mono);font-size:13px;
+           line-height:1.9;overflow-x:auto;color:#c9d1d9}
+.co{color:#6E7681;font-style:italic} .kw{color:#FF7B72} .fn{color:#D2A8FF}
+.nm{color:#79C0FF} .vr{color:#FFA657}
+
+/* ── CHECKLIST ── */
+.cl{list-style:none}
+.cli{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;margin-bottom:6px;
+     background:#fff;border:1px solid var(--g200);border-radius:6px;cursor:pointer;
+     transition:.15s;font-size:14px;line-height:1.5}
+.cli:hover{border-color:var(--g300)}
+.cli.done{background:var(--gbg);border-color:rgba(5,150,105,.3)}
+.cli.done .clb{background:var(--green);border-color:var(--green);color:#fff}
+.cli.done .clt{color:var(--g500);text-decoration:line-through}
+.clb{width:22px;height:22px;border-radius:50%;border:2px solid var(--g300);
+     display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:.2s}
+.clt{flex:1}
+.clt code{font-family:var(--mono);font-size:12px;background:var(--g100);padding:1px 5px;border-radius:3px;color:var(--blue)}
+.pb{margin:8px 0 16px}
+.pi{display:flex;justify-content:space-between;font-size:12px;font-family:var(--mono);color:var(--g500);margin-bottom:5px}
+.pt{height:5px;background:var(--g200);border-radius:3px;overflow:hidden}
+.pf{height:100%;background:var(--green);transition:width .4s;border-radius:3px}
+
+/* ── QUIZ ── */
+.qc{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:22px;margin-bottom:12px;box-shadow:var(--sh)}
+.qt{font-size:15px;font-weight:600;margin-bottom:16px;line-height:1.5;color:var(--g900)}
+.qo-wrap{display:flex;flex-direction:column;gap:8px}
+.qo{background:var(--g50);border:1px solid var(--g200);border-radius:6px;padding:11px 16px;
+    font-size:14px;text-align:left;cursor:pointer;font-family:var(--sans);color:var(--g700);
+    transition:.15s;display:flex;align-items:center;gap:10px}
+.qo:hover:not(:disabled){border-color:var(--gl);background:var(--gbg);color:var(--green)}
+.qo.ok{background:var(--gbg);border-color:var(--green);color:var(--green);font-weight:600}
+.qo.no{background:var(--rbg);border-color:var(--red);color:var(--red)}
+.qo:disabled{cursor:default}
+.qf{display:none;margin-top:10px;padding:10px 14px;border-radius:6px;font-size:13.5px}
+.qf.ok{display:block;background:var(--gbg);border:1px solid rgba(5,150,105,.3);color:var(--green)}
+.qf.no{display:block;background:var(--rbg);border:1px solid rgba(220,38,38,.3);color:var(--red)}
+.score-bar{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:16px 20px;margin-bottom:16px;display:none}
+.sc-num{font-size:30px;font-weight:800;color:var(--green);font-family:var(--mono)}
+.sc-txt{font-size:14px;color:var(--g500)}
+
+/* ── INFO BOX ── */
+.ib{display:flex;gap:12px;padding:13px 16px;border-radius:6px;margin:12px 0;font-size:13.5px;line-height:1.6}
+.ib.g{background:var(--gbg);border:1px solid rgba(5,150,105,.25);color:#065f46}
+.ib.b{background:var(--bbg);border:1px solid rgba(59,130,246,.25);color:#1e40af}
+.ib.o{background:var(--obg);border:1px solid rgba(217,119,6,.25);color:#92400e}
+.ib.r{background:var(--rbg);border:1px solid rgba(220,38,38,.25);color:#7f1d1d}
+.ii{font-size:18px;flex-shrink:0;margin-top:1px}
+
+/* ── NAV BUTTONS ── */
+.nb{display:flex;justify-content:space-between;align-items:center;
+    margin-top:48px;padding-top:22px;border-top:1px solid var(--g200)}
+.btn{font-family:var(--sans);font-size:14px;font-weight:600;padding:10px 24px;
+     border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:.2s}
+.btn-ghost{background:#fff;border:1px solid var(--g200);color:var(--g700)}
+.btn-ghost:hover{border-color:var(--gl);color:var(--green)}
+.btn-green{background:var(--green);border:none;color:#fff}
+.btn-green:hover{background:var(--gl);transform:translateY(-1px);box-shadow:0 6px 20px rgba(5,150,105,.35)}
+.step-ind{font-family:var(--mono);font-size:12px;color:var(--g500)}
+
+/* ── HERO ── */
+.hero-wrap{text-align:center;padding:60px 0 44px}
+.hero-emoji{font-size:58px;margin-bottom:20px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero-pre{font-family:var(--mono);font-size:12px;color:var(--green);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.hero h1{font-size:clamp(30px,6vw,54px);font-weight:800;letter-spacing:-2px;color:var(--g900);margin-bottom:10px}
+.hero h1 span{color:var(--green)}
+.hero p{font-size:16px;color:var(--g500);max-width:500px;margin:0 auto 36px;line-height:1.6}
+.hero-start{background:var(--green);color:#fff;border:none;border-radius:var(--r);
+            padding:16px 40px;font-size:16px;font-weight:700;cursor:pointer;
+            font-family:var(--sans);transition:.2s;display:inline-flex;align-items:center;gap:10px}
+.hero-start:hover{background:var(--gl);transform:translateY(-2px);box-shadow:0 8px 24px rgba(5,150,105,.35)}
+.hero-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:44px;text-align:left}
+.hst{background:#fff;border:1px solid var(--g200);border-radius:var(--r);padding:16px}
+.hsk{font-size:11px;font-family:var(--mono);color:var(--g500);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.hsv{font-size:18px;font-weight:800;color:var(--g900)}
+
+/* ── FINISH ── */
+.fin{text-align:center;padding:60px 20px}
+.fin-ico{font-size:64px;margin-bottom:20px;animation:pop .6s ease-out}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.fin h2{font-size:36px;font-weight:800;letter-spacing:-1.5px;color:var(--g900);margin-bottom:10px}
+.fin p{font-size:15px;color:var(--g500);max-width:440px;margin:0 auto 32px}
+.next-card{background:linear-gradient(135deg,var(--g900),#064e3b);color:#fff;
+           border-radius:var(--r);padding:22px 28px;display:inline-block;text-align:left}
+.nl{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#6EE7B7;margin-bottom:6px}
+.nv{font-size:16px;font-weight:700}
+.fin-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:32px}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-l">
+    <span class="nav-logo">Maker Lab</span>
+    <span class="nav-sep">·</span>
+    <span class="nav-title">Módulo 1 · Clase 3</span>
+  </div>
+  <div id="navDots" class="nav-dots"></div>
+  <span id="timer" class="nav-timer">00:00</span>
+</nav>
+
+<div class="wrap">
+
+<!-- ══ PAGE 0 — PORTADA ══════════════════════════════════════════════ -->
+<div class="page active" id="p0">
+  <div class="hero-wrap">
+    <div class="hero-emoji">⚡</div>
+    <div class="hero-pre">Módulo 1 · Clase 3 · Guía de Trabajo</div>
+    <div class="hero">
+      <h1>Tipos de<br><span>Circuitos</span></h1>
+      <p>Aprende la diferencia entre circuitos en serie y paralelo, domina el multímetro y construye tu Secuenciador de LEDs en protoboard.</p>
+    </div>
+    <button class="hero-start" onclick="goTo(1)">Comenzar guía <span>→</span></button>
+    <div class="hero-grid">
+      <div class="hst"><div class="hsk">Pasos</div><div class="hsv">5</div></div>
+      <div class="hst"><div class="hsk">Experimentos</div><div class="hsv">3</div></div>
+      <div class="hst"><div class="hsk">Proyecto</div><div class="hsv">Secuenciador LEDs</div></div>
+      <div class="hst"><div class="hsk">Diseño 3D</div><div class="hsv">Árbol de navidad</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 1 — TEORÍA ═══════════════════════════════════════════════ -->
+<div class="page" id="p1">
+  <div class="sh">
+    <div class="sb"><div class="sc">1</div>TEORÍA</div>
+    <h1>Circuitos, Multímetro y Protoboard</h1>
+    <p>Lee los conceptos y fíjate en las diferencias clave entre los dos tipos de circuito</p>
+    <div class="tbadge">⏱ 15 min aprox.</div>
+  </div>
+
+  <div class="tgrid">
+    <div class="tc g">
+      <div class="ti">🔗</div>
+      <div class="tl">Circuito en Serie</div>
+      <div class="tb">Componentes conectados <strong>uno tras otro</strong> en un solo camino. La corriente es la misma en todos, pero el <strong>voltaje se divide</strong>. Si uno falla, todo se apaga.</div>
+    </div>
+    <div class="tc b">
+      <div class="ti">⑂</div>
+      <div class="tl">Circuito en Paralelo</div>
+      <div class="tb">Componentes en <strong>ramas independientes</strong>. El voltaje es el mismo en cada rama. Si uno falla, <strong>los demás siguen funcionando</strong>. Así funciona el hogar.</div>
+    </div>
+    <div class="tc o">
+      <div class="ti">🔬</div>
+      <div class="tl">Multímetro</div>
+      <div class="tb">Mide <strong>voltaje (V)</strong>, <strong>corriente (A)</strong>, <strong>resistencia (Ω)</strong> y <strong>continuidad</strong>. Es la herramienta de diagnóstico fundamental en electrónica.</div>
+    </div>
+    <div class="tc r">
+      <div class="ti">🧩</div>
+      <div class="tl">Protoboard</div>
+      <div class="tb">Placa de pruebas con orificios interconectados. Las <strong>filas horizontales</strong> del centro están conectadas internamente (5 orificios por fila). Los <strong>buses laterales</strong> son + y −.</div>
+    </div>
+    <div class="tc p">
+      <div class="ti">⚡</div>
+      <div class="tl">Ley de Ohm</div>
+      <div class="tb"><strong>V = I × R</strong> — Voltaje = Corriente × Resistencia. Con Arduino 5V y 220Ω, la corriente en el LED es ≈22mA. Suficiente para encenderlo sin dañarlo.</div>
+    </div>
+    <div class="tc g">
+      <div class="ti">💡</div>
+      <div class="tl">Secuenciador de LEDs</div>
+      <div class="tb">Varios LEDs conectados en protoboard que se encienden/apagan en <strong>secuencia programada</strong> con Arduino. Combina circuitos y código.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:24px">
+    <h3 style="font-size:16px;font-weight:700;margin-bottom:14px;color:var(--g900)">Serie vs. Paralelo — tabla comparativa</h3>
+    <table class="ctable">
+      <thead>
+        <tr>
+          <th class="prop">PROPIEDAD</th>
+          <th class="serie">🔗 SERIE</th>
+          <th class="paral">⑂ PARALELO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="prop">Corriente (I)</td><td><span class="badge-g">Igual en todos</span></td><td>Se divide por ramas</td></tr>
+        <tr><td class="prop">Voltaje (V)</td><td><span class="badge-r">Se divide</span></td><td><span class="badge-b">Igual en cada rama</span></td></tr>
+        <tr><td class="prop">Si un componente falla</td><td><span class="badge-r">Todo se apaga</span></td><td><span class="badge-g">Los demás siguen</span></td></tr>
+        <tr><td class="prop">Brillo de LEDs</td><td>Más opaco</td><td><span class="badge-g">Máximo brillo</span></td></tr>
+        <tr><td class="prop">Resistencias necesarias</td><td>1 para todos</td><td>1 por cada LED</td></tr>
+        <tr><td class="prop">Ejemplo real</td><td>Luces de navidad antiguas</td><td>Enchufes del hogar</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="nb">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Inicio</button>
+    <span class="step-ind">Paso 1 de 5</span>
+    <button class="btn btn-green" onclick="goTo(2)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 2 — EXPERIMENTOS ═════════════════════════════════════════ -->
+<div class="page" id="p2">
+  <div class="sh">
+    <div class="sb"><div class="sc">2</div>EXPERIMENTOS</div>
+    <h1>3 experimentos prácticos</h1>
+    <p>Multímetro → Circuitos → Protoboard. Marca cada paso al completarlo.</p>
+    <div class="tbadge">⏱ 40–50 min aprox.</div>
+  </div>
+
+  <!-- ─ MULTIMETRO ─ -->
+  <div class="card" style="border-top:3px solid var(--green)">
+    <div class="card-t" style="color:var(--green)">🟢 Experimento 1 — Uso del Multímetro</div>
+    <p>Aprende a medir voltaje, resistencia y continuidad. Usa el multímetro simulado de abajo para practicar antes de tocar el real.</p>
+  </div>
+
+  <div class="mm-panel">
+    <div class="proto-lbl">MULTÍMETRO SIMULADO</div>
+    <div class="mm-display">
+      <span class="mm-val" id="mmVal">---</span><span class="mm-unit" id="mmUnit"></span>
+      <div class="mm-mode" id="mmMode">Selecciona una medición</div>
+    </div>
+    <div class="mm-buttons">
+      <button class="mmb" onclick="mmMeasure('voltaje')">📊 Voltaje Arduino (5V)</button>
+      <button class="mmb" onclick="mmMeasure('resist')">🔵 Resistencia 220Ω</button>
+      <button class="mmb" onclick="mmMeasure('cont-ok')">🟢 Continuidad OK</button>
+      <button class="mmb" onclick="mmMeasure('cont-fail')">🔴 Cable cortado</button>
+      <button class="mmb" onclick="mmMeasure('led')">💡 Caída LED encendido</button>
+    </div>
+    <div class="mm-tip" id="mmTip">← Haz clic en una medición para simular</div>
+  </div>
+
+  <div class="pb">
+    <div class="pi"><span>Progreso Experimento 1</span><span id="e1p">0%</span></div>
+    <div class="pt"><div class="pf" id="e1f" style="width:0"></div></div>
+  </div>
+  <ul class="cl" id="e1s">
+    <li class="cli" onclick="ck(this,'e1')"><div class="clb">✓</div><div class="clt">Medí el voltaje en la protoboard con el multímetro (esperaba 5V)</div></li>
+    <li class="cli" onclick="ck(this,'e1')"><div class="clb">✓</div><div class="clt">Medí la resistencia de una resistencia de 220Ω y verifiqué el resultado</div></li>
+    <li class="cli" onclick="ck(this,'e1')"><div class="clb">✓</div><div class="clt">Probé la continuidad de un cable en buen estado (sonó el beep)</div></li>
+    <li class="cli" onclick="ck(this,'e1')"><div class="clb">✓</div><div class="clt">Probé la continuidad de un cable roto o doblado (no sonó)</div></li>
+    <li class="cli" onclick="ck(this,'e1')"><div class="clb">✓</div><div class="clt">Medí la caída de voltaje en un LED encendido (~2V para LED rojo)</div></li>
+  </ul>
+
+  <div style="border-top:1px solid var(--g200);margin:28px 0 28px"></div>
+
+  <!-- ─ SERIE Y PARALELO ─ -->
+  <div class="card" style="border-top:3px solid var(--blue)">
+    <div class="card-t" style="color:var(--blue)">🔵 Experimento 2 — Circuitos en Serie y Paralelo</div>
+    <p>Construye ambos circuitos y compara el brillo de los LEDs. La diferencia visual es sorprendente.</p>
+  </div>
+
+  <div class="ib o">
+    <span class="ii">🔧</span>
+    <span><strong>Materiales:</strong>  3 LEDs · 3 resistencias 220Ω · protoboard · Arduino · cables Dupont</span>
+  </div>
+
+  <div class="pb">
+    <div class="pi"><span>Progreso Experimento 2</span><span id="e2p">0%</span></div>
+    <div class="pt"><div class="pf" id="e2f" style="width:0"></div></div>
+  </div>
+  <ul class="cl" id="e2s">
+    <li class="cli" onclick="ck(this,'e2')"><div class="clb">✓</div><div class="clt">Conecté 3 LEDs <strong>en serie</strong> con 1 sola resistencia al pin 13 y GND</div></li>
+    <li class="cli" onclick="ck(this,'e2')"><div class="clb">✓</div><div class="clt">Observé que los LEDs en serie brillan más opaco (el voltaje se divide)</div></li>
+    <li class="cli" onclick="ck(this,'e2')"><div class="clb">✓</div><div class="clt">Desconecté un LED del circuito en serie → todos se apagaron</div></li>
+    <li class="cli" onclick="ck(this,'e2')"><div class="clb">✓</div><div class="clt">Conecté los 3 LEDs <strong>en paralelo</strong> (cada uno con su resistencia de 220Ω)</div></li>
+    <li class="cli" onclick="ck(this,'e2')"><div class="clb">✓</div><div class="clt">Comparé el brillo: el paralelo tiene más brillo que el serie</div></li>
+    <li class="cli" onclick="ck(this,'e2')"><div class="clb">✓</div><div class="clt">Desconecté un LED del paralelo → los demás siguieron encendidos</div></li>
+  </ul>
+
+  <div style="border-top:1px solid var(--g200);margin:28px 0 28px"></div>
+
+  <!-- ─ PROTOBOARD ─ -->
+  <div class="card" style="border-top:3px solid var(--orange)">
+    <div class="card-t" style="color:var(--orange)">🟠 Experimento 3 — Protoboard + Secuenciador de LEDs</div>
+    <p>Construye el circuito del Secuenciador directamente en la protoboard. Usa el simulador para entender las conexiones antes de armar el circuito real.</p>
+  </div>
+
+  <div class="proto">
+    <div class="proto-lbl">SIMULADOR DE PROTOBOARD</div>
+    <div class="proto-board">
+      <div class="bus-row bus-r"></div>
+      <div class="bus-row bus-g"></div>
+      <div id="protoRows" style="display:flex;flex-direction:column;gap:3px;align-items:center"></div>
+      <div class="channel"></div>
+      <div id="protoRows2" style="display:flex;flex-direction:column;gap:3px;align-items:center"></div>
+      <div class="bus-row bus-g" style="margin-top:4px"></div>
+      <div class="bus-row bus-r"></div>
+    </div>
+    <div class="proto-ctrl">
+      <button class="pc" onclick="protoMode('clean')">Limpiar</button>
+      <button class="pc" onclick="protoMode('power')">Mostrar alimentación</button>
+      <button class="pc" onclick="protoMode('leds')">Mostrar LEDs</button>
+      <button class="pc" onclick="protoMode('full')">Circuito completo</button>
+    </div>
+    <div class="proto-legend">
+      <div class="leg"><div class="leg-dot" style="background:#DC2626"></div>Bus VCC (+)</div>
+      <div class="leg"><div class="leg-dot" style="background:#374151"></div>Bus GND (−)</div>
+      <div class="leg"><div class="leg-dot" style="background:#1A56DB"></div>Pin Arduino</div>
+      <div class="leg"><div class="leg-dot" style="background:#B45309"></div>Resistencia 220Ω</div>
+      <div class="leg"><div class="leg-dot" style="background:#EF4444"></div>LED encendido</div>
+    </div>
+  </div>
+
+  <div class="pb">
+    <div class="pi"><span>Progreso Experimento 3</span><span id="e3p">0%</span></div>
+    <div class="pt"><div class="pf" id="e3f" style="width:0"></div></div>
+  </div>
+  <ul class="cl" id="e3s">
+    <li class="cli" onclick="ck(this,'e3')"><div class="clb">✓</div><div class="clt">Conecté el cable de 5V al bus positivo (+) de la protoboard</div></li>
+    <li class="cli" onclick="ck(this,'e3')"><div class="clb">✓</div><div class="clt">Conecté el cable GND al bus negativo (−) de la protoboard</div></li>
+    <li class="cli" onclick="ck(this,'e3')"><div class="clb">✓</div><div class="clt">Inserté 3 LEDs en filas separadas de la zona central</div></li>
+    <li class="cli" onclick="ck(this,'e3')"><div class="clb">✓</div><div class="clt">Puse una resistencia de 220Ω en serie con cada LED (misma fila)</div></li>
+    <li class="cli" onclick="ck(this,'e3')"><div class="clb">✓</div><div class="clt">Conecté cada resistencia a su pin del Arduino (11, 12, 13)</div></li>
+    <li class="cli" onclick="ck(this,'e3')"><div class="clb">✓</div><div class="clt">Conecté el cátodo (−) de cada LED al bus negativo GND</div></li>
+    <li class="cli" onclick="ck(this,'e3')"><div class="clb">✓</div><div class="clt">Subí el código y la secuencia funcionó correctamente</div></li>
+  </ul>
+
+  <div class="nb">
+    <button class="btn btn-ghost" onclick="goTo(1)">← Atrás</button>
+    <span class="step-ind">Paso 2 de 5</span>
+    <button class="btn btn-green" onclick="goTo(3)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 3 — CÓDIGO Y PROYECTO ═══════════════════════════════════ -->
+<div class="page" id="p3">
+  <div class="sh">
+    <div class="sb"><div class="sc">3</div>CÓDIGO Y PROYECTO</div>
+    <h1>Secuenciador de LEDs 💡</h1>
+    <p>Escribe el código, prueba el simulador y personaliza tu animación</p>
+    <div class="tbadge">⏱ 25–35 min aprox.</div>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr">
+      <span class="code-nm">secuenciador_leds.ino</span>
+      <button class="copy-btn" onclick="copyCode()">📋 Copiar</button>
+    </div>
+    <div class="code-body"><span class="co">// ── Módulo 1 · Clase 3 · Secuenciador de LEDs ────────────────</span>
+
+<span class="vr">int</span> led1 = <span class="nm">11</span>;    <span class="co">// LED 1 (rojo)</span>
+<span class="vr">int</span> led2 = <span class="nm">12</span>;    <span class="co">// LED 2 (amarillo)</span>
+<span class="vr">int</span> led3 = <span class="nm">13</span>;    <span class="co">// LED 3 (verde)</span>
+<span class="vr">int</span> espera = <span class="nm">300</span>; <span class="co">// ms entre cada LED — ¡personaliza esto!</span>
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  <span class="fn">pinMode</span>(led1, OUTPUT);
+  <span class="fn">pinMode</span>(led2, OUTPUT);
+  <span class="fn">pinMode</span>(led3, OUTPUT);
+}
+
+<span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="co">// ── IDA: LED 1 → 2 → 3 ──────────────────────</span>
+  <span class="fn">digitalWrite</span>(led1, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led1, LOW);
+  <span class="fn">digitalWrite</span>(led2, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led2, LOW);
+  <span class="fn">digitalWrite</span>(led3, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led3, LOW);
+
+  <span class="co">// ── VUELTA: LED 3 → 2 → 1 ───────────────────</span>
+  <span class="fn">digitalWrite</span>(led3, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led3, LOW);
+  <span class="fn">digitalWrite</span>(led2, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led2, LOW);
+  <span class="fn">digitalWrite</span>(led1, HIGH);  <span class="fn">delay</span>(espera);  <span class="fn">digitalWrite</span>(led1, LOW);
+}</div>
+  </div>
+
+  <!-- Sequencer Simulator -->
+  <div class="seq-box">
+    <div class="proto-lbl">SIMULADOR DEL SECUENCIADOR — prueba distintos modos</div>
+    <div class="seq-leds">
+      <div class="seq-led"><div class="led-bulb" id="ld1"></div><div class="led-lbl">LED 1<br>pin 11</div></div>
+      <div class="seq-led"><div class="led-bulb" id="ld2"></div><div class="led-lbl">LED 2<br>pin 12</div></div>
+      <div class="seq-led"><div class="led-bulb" id="ld3"></div><div class="led-lbl">LED 3<br>pin 13</div></div>
+    </div>
+    <div class="seq-ctrl">
+      <button class="sc-btn" onclick="seqMode('ida')">▶ IDA</button>
+      <button class="sc-btn" onclick="seqMode('bounce')">↔ IDA+VUELTA</button>
+      <button class="sc-btn" onclick="seqMode('all')">⬛ Todos</button>
+      <button class="sc-btn" onclick="seqMode('flash')">⚡ Flash</button>
+      <button class="sc-btn" onclick="seqMode('off')">⏹ Stop</button>
+    </div>
+    <div class="seq-speed">
+      <label>Velocidad:</label>
+      <input type="range" min="50" max="600" value="300" id="spd" oninput="updSpd(this.value)">
+      <span id="spdVal">300ms</span>
+    </div>
+    <div class="seq-state" id="seqState">Haz clic en ▶ IDA para simular</div>
+  </div>
+
+  <div class="pb">
+    <div class="pi"><span>Progreso Proyecto</span><span id="prp">0%</span></div>
+    <div class="pt"><div class="pf" id="prf" style="width:0"></div></div>
+  </div>
+  <ul class="cl" id="prs">
+    <li class="cli" onclick="ck(this,'pr')"><div class="clb">✓</div><div class="clt">El circuito de 3 LEDs en protoboard está correctamente conectado</div></li>
+    <li class="cli" onclick="ck(this,'pr')"><div class="clb">✓</div><div class="clt">El código base (ida y vuelta) funciona en el Arduino</div></li>
+    <li class="cli" onclick="ck(this,'pr')"><div class="clb">✓</div><div class="clt">Cambié la variable <code>espera</code> y noté la diferencia de velocidad</div></li>
+    <li class="cli" onclick="ck(this,'pr')"><div class="clb">✓</div><div class="clt">Personalicé el orden de los LEDs para crear un patrón diferente</div></li>
+    <li class="cli" onclick="ck(this,'pr')"><div class="clb">✓</div><div class="clt">Agregué al menos un efecto especial (flash, todos juntos, pausa)</div></li>
+    <li class="cli" onclick="ck(this,'pr')"><div class="clb">✓</div><div class="clt">Avancé en el Diseño 3D del Árbol de navidad en Tinkercad</div></li>
+  </ul>
+
+  <div class="ib g" style="margin-top:12px">
+    <span class="ii">🎄</span>
+    <span><strong>Diseño 3D — Árbol de navidad:</strong> En Tinkercad CAD, construye el árbol con conos decrecientes apilados, un tronco cilíndrico y decoraciones esféricas. Practica la alineación en el eje Z y la composición simétrica.</span>
+  </div>
+
+  <div class="nb">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Atrás</button>
+    <span class="step-ind">Paso 3 de 5</span>
+    <button class="btn btn-green" onclick="goTo(4)">Siguiente →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 4 — QUIZ ══════════════════════════════════════════════════ -->
+<div class="page" id="p4">
+  <div class="sh">
+    <div class="sb"><div class="sc">4</div>QUIZ</div>
+    <h1>¿Cuánto aprendiste?</h1>
+    <p>7 preguntas sobre los temas exactos de la clase. ¡Sin trampa!</p>
+  </div>
+
+  <div class="score-bar" id="scoreBar">
+    <div class="sc-num" id="scoreNum"></div>
+    <div class="sc-txt" id="scoreTxt"></div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="qc">
+    <div class="qt">1. En un circuito en <strong>serie</strong> con 3 LEDs y fuente de 5V, ¿cuánto voltaje recibe cada LED aproximadamente?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,'q1')"><span>○</span>5V cada uno</button>
+      <button class="qo" onclick="ans(this,true,'q1')"><span>○</span>≈1.67V cada uno (5V ÷ 3)</button>
+      <button class="qo" onclick="ans(this,false,'q1')"><span>○</span>0V, no funcionan</button>
+      <button class="qo" onclick="ans(this,false,'q1')"><span>○</span>10V, se suman</button>
+    </div>
+    <div class="qf" id="q1-fb"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="qc">
+    <div class="qt">2. En la protoboard, ¿cuántos orificios están conectados internamente en la zona central?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,'q2')"><span>○</span>2 orificios por columna</button>
+      <button class="qo" onclick="ans(this,true,'q2')"><span>○</span>5 orificios por fila (a-b-c-d-e)</button>
+      <button class="qo" onclick="ans(this,false,'q2')"><span>○</span>Todos los orificios de la fila completa</button>
+      <button class="qo" onclick="ans(this,false,'q2')"><span>○</span>10 orificios por columna</button>
+    </div>
+    <div class="qf" id="q2-fb"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="qc">
+    <div class="qt">3. Estás probando un cable con el multímetro en modo continuidad. No suena el beep. ¿Qué significa?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,'q3')"><span>○</span>El multímetro está roto</button>
+      <button class="qo" onclick="ans(this,false,'q3')"><span>○</span>El cable está en buen estado</button>
+      <button class="qo" onclick="ans(this,true,'q3')"><span>○</span>El cable está cortado o roto por dentro</button>
+      <button class="qo" onclick="ans(this,false,'q3')"><span>○</span>Hay que cambiar la batería del multímetro</button>
+    </div>
+    <div class="qf" id="q3-fb"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="qc">
+    <div class="qt">4. En el circuito en <strong>paralelo</strong>, desconectas un LED. Los otros dos LEDs...</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,'q4')"><span>○</span>Se apagan también</button>
+      <button class="qo" onclick="ans(this,true,'q4')"><span>○</span>Siguen encendidos normalmente</button>
+      <button class="qo" onclick="ans(this,false,'q4')"><span>○</span>Brillan más fuerte</button>
+      <button class="qo" onclick="ans(this,false,'q4')"><span>○</span>Parpadean</button>
+    </div>
+    <div class="qf" id="q4-fb"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="qc">
+    <div class="qt">5. En el código del Secuenciador, ¿qué variable controla la velocidad de la animación?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,'q5')"><span>○</span>led1, led2, led3</button>
+      <button class="qo" onclick="ans(this,true,'q5')"><span>○</span>espera</button>
+      <button class="qo" onclick="ans(this,false,'q5')"><span>○</span>OUTPUT</button>
+      <button class="qo" onclick="ans(this,false,'q5')"><span>○</span>loop()</button>
+    </div>
+    <div class="qf" id="q5-fb"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="qc">
+    <div class="qt">6. Para medir voltaje con el multímetro, ¿cómo conectas las puntas al circuito?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,'q6')"><span>○</span>En serie — hay que romper el circuito</button>
+      <button class="qo" onclick="ans(this,true,'q6')"><span>○</span>En paralelo — directamente sobre el componente</button>
+      <button class="qo" onclick="ans(this,false,'q6')"><span>○</span>Desconectando el componente</button>
+      <button class="qo" onclick="ans(this,false,'q6')"><span>○</span>Solo cuando el circuito está apagado</button>
+    </div>
+    <div class="qf" id="q6-fb"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="qc">
+    <div class="qt">7. ¿Cuántas resistencias de 220Ω necesitas para conectar 3 LEDs en <strong>paralelo</strong> al Arduino?</div>
+    <div class="qo-wrap">
+      <button class="qo" onclick="ans(this,false,'q7')"><span>○</span>1 resistencia para todos</button>
+      <button class="qo" onclick="ans(this,false,'q7')"><span>○</span>2 resistencias</button>
+      <button class="qo" onclick="ans(this,true,'q7')"><span>○</span>3 resistencias — una por cada LED</button>
+      <button class="qo" onclick="ans(this,false,'q7')"><span>○</span>No se necesitan resistencias en paralelo</button>
+    </div>
+    <div class="qf" id="q7-fb"></div>
+  </div>
+
+  <div class="nb">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Atrás</button>
+    <span class="step-ind">Paso 4 de 5</span>
+    <button class="btn btn-green" onclick="goTo(5)">Finalizar →</button>
+  </div>
+</div>
+
+<!-- ══ PAGE 5 — FIN ═══════════════════════════════════════════════════ -->
+<div class="page" id="p5">
+  <div class="fin">
+    <div class="fin-ico">🎉</div>
+    <h2>¡Clase 3 completada!</h2>
+    <p>Ya distingues serie de paralelo, usas el multímetro, armas circuitos en protoboard y tienes tu Secuenciador de LEDs funcionando.</p>
+    <div class="next-card">
+      <div class="nl">📚 Próxima clase (Clase 4)</div>
+      <div class="nv">LED RGB: modelo de color, programación por texto → Proyecto: Combinaciones de colores</div>
+    </div>
+    <div class="fin-btns">
+      <button class="btn btn-ghost" onclick="goTo(4)">← Revisar quiz</button>
+      <button class="btn btn-green" onclick="goTo(0);resetAll()">🔁 Reiniciar</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let cur=0, total=6;
+let quizScore=0, quizDone={};
+let timerStart=Date.now();
+let seqTimer=null, seqRunning=false, seqStep=0, seqDir=1, seqCurrentMode=null;
+let seqSpeed=300;
+
+// ── Nav ──────────────────────────────────────────────────────────────────
+function goTo(n){
+  document.getElementById(`p${cur}`).classList.remove('active');
+  cur=n;
+  document.getElementById(`p${n}`).classList.add('active');
+  buildNav(); window.scrollTo({top:0,behavior:'smooth'});
+}
+function buildNav(){
+  const c=document.getElementById('navDots'); c.innerHTML='';
+  for(let i=1;i<total;i++){
+    const d=document.createElement('div');
+    d.className='nd'+(i===cur?' active':i<cur?' done':'');
+    d.textContent=i<cur?'✓':i;
+    d.onclick=()=>goTo(i); c.appendChild(d);
+  }
+}
+
+// ── Timer ─────────────────────────────────────────────────────────────────
+setInterval(()=>{
+  const s=Math.floor((Date.now()-timerStart)/1000);
+  document.getElementById('timer').textContent=
+    `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+},1000);
+
+// ── Checklist ─────────────────────────────────────────────────────────────
+const cts={e1:0,e2:0,e3:0,pr:0}, tots={e1:5,e2:6,e3:7,pr:6};
+function ck(el,k){
+  el.classList.toggle('done');
+  cts[k]=document.querySelectorAll(`#${k}s li.done`).length;
+  const pct=Math.round(cts[k]/tots[k]*100);
+  document.getElementById(`${k}p`).textContent=pct+'%';
+  document.getElementById(`${k}f`).style.width=pct+'%';
+}
+
+// ── Multimeter Simulator ───────────────────────────────────────────────────
+const mmData={
+  voltaje:{ val:'4.98', unit:'V', mode:'Voltaje DC — 20V', tip:'✓ Normal. El Arduino entrega ~5V. Pequeñas variaciones son normales.' },
+  resist: { val:'218', unit:'Ω', mode:'Resistencia — 2kΩ', tip:'✓ Resistencia de 220Ω. La tolerancia del ±5% hace que lea entre 209–231Ω.' },
+  'cont-ok':  { val:'beep', unit:'', mode:'Continuidad', tip:'🔊 ¡Beep! El cable tiene continuidad — la corriente pasa correctamente.' },
+  'cont-fail':{ val:'1', unit:'', mode:'Continuidad — sin paso', tip:'🔇 Sin beep. Circuito abierto. El cable está cortado o mal conectado.' },
+  led:    { val:'1.87', unit:'V', mode:'Voltaje DC — caída LED', tip:'✓ Caída de voltaje típica de un LED rojo encendido (~1.7–2.2V).' },
+};
+function mmMeasure(k){
+  const d=mmData[k];
+  document.getElementById('mmVal').textContent=d.val;
+  document.getElementById('mmUnit').textContent=d.unit;
+  document.getElementById('mmMode').textContent=d.mode;
+  document.getElementById('mmTip').textContent=d.tip;
+  document.querySelectorAll('.mmb').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  if(k==='cont-ok'){
+    document.getElementById('mmVal').style.color='#5CFF5C';
+  } else if(k==='cont-fail'){
+    document.getElementById('mmVal').style.color='#FF5C5C';
+  } else {
+    document.getElementById('mmVal').style.color='#5CFF5C';
+  }
+}
+
+// ── Protoboard Simulator ───────────────────────────────────────────────────
+function buildProto(){
+  const numRows=8, numHoles=10;
+  ['protoRows','protoRows2'].forEach(id=>{
+    const c=document.getElementById(id);
+    for(let r=1;r<=numRows;r++){
+      const row=document.createElement('div');
+      row.className='proto-row';
+      const lbl=document.createElement('div');
+      lbl.className='proto-row-label';
+      lbl.textContent=r+(id==='protoRows2'?numRows:'');
+      row.appendChild(lbl);
+      for(let h=0;h<numHoles;h++){
+        const ph=document.createElement('div');
+        ph.className='ph';
+        ph.id=`ph_${id}_${r}_${h}`;
+        row.appendChild(ph);
+      }
+      c.appendChild(row);
+    }
+  });
+}
+
+function clearProto(){
+  document.querySelectorAll('.ph').forEach(h=>{
+    h.className='ph';
+    h.title='';
+    h.innerHTML='';
+  });
+}
+
+function setHole(rowBlock, row, col, cls, label=''){
+  const el=document.getElementById(`ph_${rowBlock}_${row}_${col}`);
+  if(el){ el.className='ph '+cls; if(label) el.title=label; }
+}
+
+function protoMode(mode){
+  clearProto();
+  document.querySelectorAll('.pc').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  if(mode==='clean') return;
+  if(mode==='power'||mode==='full'||mode==='leds'){
+    // Power connections
+    for(let col=0;col<10;col++){
+      setHole('protoRows',1,col,'used vcc','5V — bus positivo');
+      setHole('protoRows',1,col,'used vcc','5V');
+    }
+    setHole('protoRows',2,0,'used gnd','GND desde Arduino');
+  }
+  if(mode==='leds'||mode==='full'){
+    // LED 1 en fila 3
+    setHole('protoRows',3,2,'used pin','Pin 11 — LED 1');
+    setHole('protoRows',3,3,'used','Resistencia 220Ω — LED 1');
+    setHole('protoRows',3,4,'led-r','LED ROJO — ánodo');
+    setHole('protoRows',3,5,'used gnd','LED ROJO — cátodo → GND');
+    // LED 2 en fila 5
+    setHole('protoRows',5,2,'used pin','Pin 12 — LED 2');
+    setHole('protoRows',5,3,'used','Resistencia 220Ω — LED 2');
+    setHole('protoRows',5,4,'led-y','LED AMARILLO — ánodo');
+    setHole('protoRows',5,5,'used gnd','LED AMARILLO — cátodo → GND');
+    // LED 3 en fila 7
+    setHole('protoRows',7,2,'used pin','Pin 13 — LED 3');
+    setHole('protoRows',7,3,'used','Resistencia 220Ω — LED 3');
+    setHole('protoRows',7,4,'led-g','LED VERDE — ánodo');
+    setHole('protoRows',7,5,'used gnd','LED VERDE — cátodo → GND');
+  }
+}
+
+// ── Sequencer Simulator ────────────────────────────────────────────────────
+const LEDS=['ld1','ld2','ld3'];
+const COLORS=['on-r','on-y','on-g'];
+function allOff(){ LEDS.forEach(id=>{document.getElementById(id).className='led-bulb';}); }
+function setLed(i,on){ const el=document.getElementById(LEDS[i]); el.className='led-bulb'+(on?' '+COLORS[i]:''); }
+
+function seqMode(mode){
+  clearInterval(seqTimer); allOff(); seqStep=0; seqDir=1; seqCurrentMode=mode;
+  document.querySelectorAll('.sc-btn').forEach(b=>b.classList.remove('on'));
+  event.target.classList.add('on');
+  if(mode==='off'){ document.getElementById('seqState').textContent='Secuenciador detenido'; return; }
+  if(mode==='all'){ LEDS.forEach((_,i)=>setLed(i,true)); document.getElementById('seqState').textContent='Estado: todos encendidos'; return; }
+  seqRunning=true;
+  function tick(){
+    allOff();
+    if(mode==='ida'){
+      setLed(seqStep%3,true);
+      document.getElementById('seqState').textContent=`Estado: LED ${seqStep%3+1} (pin ${11+seqStep%3}) — HIGH`;
+      seqStep++;
+    } else if(mode==='bounce'){
+      setLed(seqStep,true);
+      document.getElementById('seqState').textContent=`Estado: LED ${seqStep+1} (pin ${11+seqStep})`;
+      seqStep+=seqDir;
+      if(seqStep>=2) seqDir=-1;
+      if(seqStep<=0) seqDir=1;
+    } else if(mode==='flash'){
+      const on=seqStep%2===0;
+      LEDS.forEach((_,i)=>setLed(i,on));
+      document.getElementById('seqState').textContent=`Flash: todos ${on?'HIGH':'LOW'}`;
+      seqStep++;
+    }
+    seqTimer=setTimeout(tick, seqSpeed);
+  }
+  tick();
+}
+function updSpd(v){
+  seqSpeed=parseInt(v);
+  document.getElementById('spdVal').textContent=v+'ms';
+}
+
+// ── Quiz ──────────────────────────────────────────────────────────────────
+function ans(btn,correct,qid){
+  if(quizDone[qid]) return;
+  quizDone[qid]=true;
+  const opts=btn.closest('.qo-wrap').querySelectorAll('.qo');
+  opts.forEach(o=>o.disabled=true);
+  btn.classList.add(correct?'ok':'no');
+  if(!correct) opts.forEach(o=>{ if(o.onclick.toString().includes('true')) o.classList.add('ok'); });
+  if(correct) quizScore++;
+  const fb=document.getElementById(`${qid}-fb`);
+  fb.className=`qf ${correct?'ok':'no'}`;
+  fb.textContent=correct?'✓ ¡Correcto!':'✗ Incorrecto. La respuesta correcta está marcada en verde.';
+  if(Object.keys(quizDone).length===7) showScore();
+}
+function showScore(){
+  const bar=document.getElementById('scoreBar');
+  bar.style.display='block';
+  const emojis=['😅','😐','🙂','👍','🌟','🏆','🏆','🏆'];
+  document.getElementById('scoreNum').textContent=`${quizScore} / 7  ${emojis[quizScore]}`;
+  document.getElementById('scoreTxt').textContent=
+    quizScore>=6?'¡Excelente! Dominas los conceptos de la clase.':
+    quizScore>=5?'¡Muy bien! Repasa las preguntas que fallaste.':
+    quizScore>=4?'Buen intento. Revisa teoría de circuitos y protoboard.':
+    'Necesitas repasar los conceptos de la clase antes de continuar.';
+  bar.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── Copy code ─────────────────────────────────────────────────────────────
+function copyCode(){
+  const code=`int led1 = 11;
+int led2 = 12;
+int led3 = 13;
+int espera = 300;
+
+void setup() {
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+  pinMode(led3, OUTPUT);
+}
+
+void loop() {
+  // IDA: LED 1 → 2 → 3
+  digitalWrite(led1, HIGH); delay(espera); digitalWrite(led1, LOW);
+  digitalWrite(led2, HIGH); delay(espera); digitalWrite(led2, LOW);
+  digitalWrite(led3, HIGH); delay(espera); digitalWrite(led3, LOW);
+
+  // VUELTA: LED 3 → 2 → 1
+  digitalWrite(led3, HIGH); delay(espera); digitalWrite(led3, LOW);
+  digitalWrite(led2, HIGH); delay(espera); digitalWrite(led2, LOW);
+  digitalWrite(led1, HIGH); delay(espera); digitalWrite(led1, LOW);
+}`;
+  navigator.clipboard.writeText(code).then(()=>{
+    const b=document.querySelector('.copy-btn');
+    b.textContent='✓ Copiado'; setTimeout(()=>b.textContent='📋 Copiar',2000);
+  });
+}
+
+// ── Reset ─────────────────────────────────────────────────────────────────
+function resetAll(){
+  quizScore=0; quizDone={};
+  document.querySelectorAll('.qo').forEach(o=>{o.disabled=false;o.className='qo';});
+  document.querySelectorAll('.qf').forEach(f=>f.className='qf');
+  document.getElementById('scoreBar').style.display='none';
+  document.querySelectorAll('.cli').forEach(l=>l.classList.remove('done'));
+  Object.keys(cts).forEach(k=>{
+    cts[k]=0;
+    const pe=document.getElementById(`${k}p`); const fe=document.getElementById(`${k}f`);
+    if(pe) pe.textContent='0%'; if(fe) fe.style.width='0';
+  });
+  timerStart=Date.now();
+  clearInterval(seqTimer); allOff();
+  clearProto();
+  document.querySelectorAll('.pc').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.mmb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('mmVal').textContent='---';
+  document.getElementById('mmUnit').textContent='';
+  document.getElementById('mmMode').textContent='Selecciona una medición';
+  document.getElementById('mmTip').textContent='← Haz clic en una medición para simular';
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────
+buildNav();
+buildProto();
+</script>
+</body>
+</html>
